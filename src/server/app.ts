@@ -13,7 +13,7 @@ app.all('/api/auth/*splat', toNodeHandler(auth));
     credentials: true,
  }))
 // Import and use post routes
-app.use("/api", postRouter);
+app.use("/posts", postRouter);
 app.route("/").get((req, res) => {
     res.send("Hello, World!");
 });

@@ -20,7 +20,17 @@ const getAllPosts = async (req: Request, res: Response) => {
    }
 }
 
-
+//get post by id
+const getPostById = async (req: Request, res: Response) => {
+   try {
+      const { id } = req.params;
+      const result = await postService.getPostById(id as string);
+      return res.status(200).json(result);
+   } catch (error) {
+      console.error("Get Post By Id Error:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+   }
+}
 //create post
 const createPost = async (req: Request, res: Response) => {
    try {
@@ -39,5 +49,6 @@ const createPost = async (req: Request, res: Response) => {
 
 export const postController = {
    createPost,
-   getAllPosts
+   getAllPosts,
+   getPostById
 };

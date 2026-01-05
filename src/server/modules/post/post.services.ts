@@ -62,6 +62,29 @@ const count = await prisma.post.count({
   }
 }
 
+///get post by id
+
+const getPostById = async (id: string) => {
+  return prisma.$transaction(async (tx) => {
+   await tx.post.update({
+    where: {
+      id
+    },
+    data: {
+        views: {
+        increment: 1
+      }
+    }
+  })
+  const result = await tx.post.findUnique({
+    where: {
+      id
+    }
+  })
+
+  return result
+  })
+}
 //create post
 const createPost = async (
   data: Omit<Post, 'id' | 'createdAt' | 'updatedAt' | 'authorId'>,
@@ -79,5 +102,6 @@ const createPost = async (
 
 export const postService = {
   createPost,
-  getAllPosts
+  getAllPosts,
+  getPostById
 }

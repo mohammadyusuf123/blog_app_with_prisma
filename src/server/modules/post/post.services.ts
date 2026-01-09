@@ -2,6 +2,7 @@ import { Post } from "../../../../generated/prisma/client"
 import { PostWhereInput } from "../../../../generated/prisma/models"
 import { prisma } from "../../../lib/prisma"
 
+
 //get all posts
 const getAllPosts = async (payload: {
   search: string | undefined,
@@ -46,6 +47,13 @@ const getAllPosts = async (payload: {
     orderBy: {
       [payload.sortBy]: payload.sortOrder
     },
+    include: {
+      _count: {
+        select: {
+          comments: true
+        }
+      }
+    },
     where: conditions.length > 0 ? { AND: conditions } : {}
   })
 const count = await prisma.post.count({
@@ -79,7 +87,29 @@ const getPostById = async (id: string) => {
   const result = await tx.post.findUnique({
     where: {
       id
-    }
+    },
+    include: {
+      comments:{
+        where: {
+          parentId: null,
+          status: "APPROVED"
+        },
+        orderBy: {
+          createdAt: "desc"
+        },
+        include: {
+          replies:{
+            orderBy: {
+              createdAt: "asc"
+            },
+            include: {
+              replies: true
+            }
+          }
+        }
+      }
+    },
+    
   })
 
   return result

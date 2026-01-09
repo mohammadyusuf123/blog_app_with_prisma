@@ -31,7 +31,7 @@ model Comments {
   status    CommentsStatus @default(APPROVED)
   postId    String         @db.Uuid
   post      Post           @relation(fields: [postId], references: [id])
-  authorId  String         @db.Uuid
+  authorId  String
   parentId  String?        @db.Uuid
   parent    Comments?      @relation("CommentReplies", fields: [parentId], references: [id])
   replies   Comments[]     @relation("CommentReplies")

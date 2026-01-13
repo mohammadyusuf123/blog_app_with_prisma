@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { postService } from "./post.services";
 import { paginationSortingHelper } from "../../../helper/paginationShorting";
 
@@ -32,7 +32,7 @@ const getPostById = async (req: Request, res: Response) => {
    }
 }
 //create post
-const createPost = async (req: Request, res: Response) => {
+const createPost = async (req: Request, res: Response,next:NextFunction) => {
    try {
       if (!req.user) {
          return res.status(401).json({ error: "Unauthorized" });
@@ -41,8 +41,7 @@ const createPost = async (req: Request, res: Response) => {
       const result = await postService.createPost(req.body, req.user.id);
       return res.status(201).json(result);
    } catch (error) {
-      console.error("Create Post Error:", error);
-      return res.status(500).json({ error: "Internal Server Error" });
+      next(error)
    }
 };
 

@@ -6,26 +6,36 @@ import { postRouter } from "./modules/post/post.routes";
 import { commentRouter } from "./modules/comment/comment.routes";
 import errorHandler from "../lib/middleware/globalErrorHandler";
 import { notFound } from "../lib/middleware/notFound";
+
 const app = express();
-app.use(express.json());
-app.all('/api/auth/*splat', toNodeHandler(auth));
- //adding cors middleware
- app.use(cors({
-    origin: process.env.APP_URL,
+
+// CORS must come BEFORE all routes
+app.use(cors({
+    origin: "http://localhost:3000",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
- }))
-// post routes
-app.use("/posts", postRouter);
-//comment routes
-app.use("/comments", commentRouter);
-//not found handler
-app.use(notFound);
-//error handler
-app.use(errorHandler);
+}));
 
+app.use(express.json());
+
+// Auth routes (now CORS is already applied)
+app.all('/api/auth/*splat', toNodeHandler(auth));
+ 
+// Post routes
+app.use("/posts", postRouter);
+
+// Comment routes
+app.use("/comments", commentRouter);
+
+// Home route
 app.route("/").get((req, res) => {
     res.send("Hello, World!");
 });
+
+// Not found handler
+app.use(notFound);
+
+// Error handler
+app.use(errorHandler);
 
 export { app };
